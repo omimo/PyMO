@@ -1,0 +1,129 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Axes3D	../viz_tools.py	/^    from mpl_toolkits.mplot3d import Axes3D$/;"	kind:namespace	line:48
+BVHParser	../parsers.py	/^class BVHParser():$/;"	kind:class	line:53
+BVHScanner	../parsers.py	/^class BVHScanner():$/;"	kind:class	line:14
+BVHWriter	../writers.py	/^class BVHWriter():$/;"	kind:class	line:4
+BaseEstimator	../preprocessing.py	/^from sklearn.base import BaseEstimator, TransformerMixin$/;"	kind:namespace	line:10
+ConstantsRemover	../preprocessing.py	/^class ConstantsRemover(BaseEstimator, TransformerMixin):$/;"	kind:class	line:562
+Flattener	../preprocessing.py	/^class Flattener(BaseEstimator, TransformerMixin):$/;"	kind:class	line:552
+Joint	../data.py	/^class Joint():$/;"	kind:class	line:3
+Joint	../parsers.py	/^from pymo.data import Joint, MocapData$/;"	kind:namespace	line:12
+JointSelector	../preprocessing.py	/^class JointSelector(BaseEstimator, TransformerMixin):$/;"	kind:class	line:230
+ListStandardScaler	../preprocessing.py	/^class ListStandardScaler(BaseEstimator, TransformerMixin):$/;"	kind:class	line:603
+MocapData	../data.py	/^class MocapData():$/;"	kind:class	line:9
+MocapData	../parsers.py	/^from pymo.data import Joint, MocapData$/;"	kind:namespace	line:12
+MocapParameterizer	../preprocessing.py	/^class MocapParameterizer(BaseEstimator, TransformerMixin):$/;"	kind:class	line:14
+Numpyfier	../preprocessing.py	/^class Numpyfier(BaseEstimator, TransformerMixin):$/;"	kind:class	line:270
+RootCentricPositionNormalizer	../preprocessing.py	/^class RootCentricPositionNormalizer(BaseEstimator, TransformerMixin):$/;"	kind:class	line:513
+RootTransformer	../preprocessing.py	/^class RootTransformer(BaseEstimator, TransformerMixin):$/;"	kind:class	line:309
+Rotation	../preprocessing.py	/^from pymo.rotation_tools import Rotation$/;"	kind:namespace	line:12
+Rotation	../rotation_tools.py	/^class Rotation():$/;"	kind:class	line:20
+TemplateTransform	../preprocessing.py	/^class TemplateTransform(BaseEstimator, TransformerMixin):$/;"	kind:class	line:659
+TransformerMixin	../preprocessing.py	/^from sklearn.base import BaseEstimator, TransformerMixin$/;"	kind:namespace	line:10
+__init__	../data.py	/^    def __init__(self):$/;"	kind:member	line:10
+__init__	../data.py	/^    def __init__(self, name, parent=None, children=None):$/;"	kind:member	line:4
+__init__	../parsers.py	/^    def __init__(self):$/;"	kind:member	line:18
+__init__	../parsers.py	/^    def __init__(self, filename=None):$/;"	kind:member	line:59
+__init__	../preprocessing.py	/^    def __init__(self):$/;"	kind:member	line:275
+__init__	../preprocessing.py	/^    def __init__(self):$/;"	kind:member	line:514
+__init__	../preprocessing.py	/^    def __init__(self):$/;"	kind:member	line:553
+__init__	../preprocessing.py	/^    def __init__(self):$/;"	kind:member	line:660
+__init__	../preprocessing.py	/^    def __init__(self, eps = 10e-10):$/;"	kind:member	line:567
+__init__	../preprocessing.py	/^    def __init__(self, is_DataFrame=False):$/;"	kind:member	line:604
+__init__	../preprocessing.py	/^    def __init__(self, joints, include_root=False):$/;"	kind:member	line:234
+__init__	../preprocessing.py	/^    def __init__(self, method):$/;"	kind:member	line:310
+__init__	../preprocessing.py	/^    def __init__(self, param_type = 'euler'):$/;"	kind:member	line:15
+__init__	../rotation_tools.py	/^    def __init__(self,rot, param_type, **params):$/;"	kind:member	line:21
+__init__	../writers.py	/^    def __init__(self):$/;"	kind:member	line:5
+__init__.py	../__init__.py	1;"	kind:file	line:1
+_expmap_to_euler	../preprocessing.py	/^    def _expmap_to_euler(self, X):$/;"	kind:member	line:188
+_from_euler	../rotation_tools.py	/^    def _from_euler(self, alpha, beta, gamma, params):$/;"	kind:member	line:28
+_from_expmap	../rotation_tools.py	/^    def _from_expmap(self, alpha, beta, gamma, params):$/;"	kind:member	line:51
+_get_bone_context	../parsers.py	/^    def _get_bone_context(self):$/;"	kind:member	line:113
+_new_bone	../parsers.py	/^    def _new_bone(self, parent, name):$/;"	kind:member	line:106
+_parse_hierarchy	../parsers.py	/^    def _parse_hierarchy(self, bvh):$/;"	kind:member	line:180
+_parse_joint	../parsers.py	/^    def _parse_joint(self, bvh, token_index):$/;"	kind:member	line:142
+_parse_motion	../parsers.py	/^    def _parse_motion(self, bvh):$/;"	kind:member	line:209
+_pop_bone_context	../parsers.py	/^    def _pop_bone_context(self):$/;"	kind:member	line:116
+_printJoint	../writers.py	/^    def _printJoint(self, X, joint, tab, ofile):$/;"	kind:member	line:26
+_push_bone_context	../parsers.py	/^    def _push_bone_context(self,name):$/;"	kind:member	line:110
+_read_channels	../parsers.py	/^    def _read_channels(self, bvh, token_index):$/;"	kind:member	line:130
+_read_offset	../parsers.py	/^    def _read_offset(self, bvh, token_index):$/;"	kind:member	line:120
+_to_DataFrame	../parsers.py	/^    def _to_DataFrame(self):$/;"	kind:member	line:94
+_to_expmap	../preprocessing.py	/^    def _to_expmap(self, X):$/;"	kind:member	line:145
+_to_pos	../preprocessing.py	/^    def _to_pos(self, X):$/;"	kind:member	line:53
+clone	../data.py	/^    def clone(self):$/;"	kind:member	line:25
+close_brace	../parsers.py	/^        def close_brace(scanner, token):$/;"	kind:function	line:32
+copy	../data.py	/^        import copy$/;"	kind:namespace	line:26
+copy	../preprocessing.py	/^import copy$/;"	kind:namespace	line:7
+data.py	../data.py	1;"	kind:file	line:1
+deg2rad	../rotation_tools.py	/^def deg2rad(x):$/;"	kind:function	line:13
+digit	../parsers.py	/^        def digit(scanner, token):$/;"	kind:function	line:26
+draw_stickfigure	../viz_tools.py	/^def draw_stickfigure(mocap_track, frame, data=None, joints=None, draw_names=False, ax=None, figsize=(8,8)):$/;"	kind:function	line:10
+draw_stickfigure3d	../viz_tools.py	/^def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=False, ax=None, figsize=(8,8)):$/;"	kind:function	line:47
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:22
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:238
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:278
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:318
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:517
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:556
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:571
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:607
+fit	../preprocessing.py	/^    def fit(self, X, y=None):$/;"	kind:member	line:663
+get_all_channels	../data.py	/^    def get_all_channels(self):$/;"	kind:member	line:35
+get_constant_channels	../data.py	/^    def get_constant_channels(self):$/;"	kind:member	line:51
+get_empty_channels	../data.py	/^    def get_empty_channels(self):$/;"	kind:member	line:47
+get_euler_axis	../rotation_tools.py	/^    def get_euler_axis(self):$/;"	kind:member	line:77
+get_skeleton_tree	../data.py	/^    def get_skeleton_tree(self):$/;"	kind:member	line:41
+identifier	../parsers.py	/^        def identifier(scanner, token):$/;"	kind:function	line:20
+inverse_transform	../preprocessing.py	/^    def inverse_transform(self, X, copy=None): $/;"	kind:member	line:39
+inverse_transform	../preprocessing.py	/^    def inverse_transform(self, X, copy=None):$/;"	kind:member	line:292
+inverse_transform	../preprocessing.py	/^    def inverse_transform(self, X, copy=None):$/;"	kind:member	line:548
+inverse_transform	../preprocessing.py	/^    def inverse_transform(self, X, copy=None):$/;"	kind:member	line:592
+inverse_transform	../preprocessing.py	/^    def inverse_transform(self, X, copy=None):$/;"	kind:member	line:635
+inverse_transform	../preprocessing.py	/^    def inverse_transform(self, X, copy=None, start_pos=None):$/;"	kind:member	line:403
+math	../rotation_tools.py	/^import math$/;"	kind:namespace	line:10
+matplotlib	../viz_tools.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:2
+np	../data.py	/^import numpy as np$/;"	kind:namespace	line:1
+np	../parsers.py	/^import numpy as np$/;"	kind:namespace	line:11
+np	../preprocessing.py	/^import numpy as np$/;"	kind:namespace	line:9
+np	../rotation_tools.py	/^import numpy as np$/;"	kind:namespace	line:11
+np	../writers.py	/^import numpy as np$/;"	kind:namespace	line:1
+open_brace	../parsers.py	/^        def open_brace(scanner, token):$/;"	kind:function	line:29
+operator	../parsers.py	/^        def operator(scanner, token):$/;"	kind:function	line:23
+parse	../parsers.py	/^    def parse(self, filename):$/;"	kind:member	line:76
+parsers.py	../parsers.py	1;"	kind:file	line:1
+pd	../parsers.py	/^        import pandas as pd$/;"	kind:namespace	line:97
+pd	../preprocessing.py	/^import pandas as pd$/;"	kind:namespace	line:8
+pd	../viz_tools.py	/^import pandas as pd$/;"	kind:namespace	line:1
+pd	../writers.py	/^import pandas as pd$/;"	kind:namespace	line:2
+plt	../viz_tools.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:2
+preprocessing.py	../preprocessing.py	1;"	kind:file	line:1
+print_skel	../viz_tools.py	/^def print_skel(X):$/;"	kind:function	line:95
+rad2deg	../rotation_tools.py	/^def rad2deg(x):$/;"	kind:function	line:17
+re	../parsers.py	/^import re$/;"	kind:namespace	line:10
+reset	../parsers.py	/^    def reset(self): $/;"	kind:member	line:62
+rotation_tools.py	../rotation_tools.py	1;"	kind:file	line:1
+save_fig	../viz_tools.py	/^def save_fig(fig_id, tight_layout=True):$/;"	kind:function	line:4
+scan	../parsers.py	/^    def scan(self, stuff):$/;"	kind:member	line:48
+to_euler	../rotation_tools.py	/^    def to_euler(self, use_deg=False):$/;"	kind:member	line:91
+to_expmap	../rotation_tools.py	/^    def to_expmap(self):$/;"	kind:member	line:84
+to_quat	../rotation_tools.py	/^    def to_quat(self):$/;"	kind:member	line:126
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:241
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:25
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:284
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:321
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:520
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:559
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:578
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:618
+transform	../preprocessing.py	/^    def transform(self, X, y=None):$/;"	kind:member	line:666
+traverse	../data.py	/^    def traverse(self, j=None):$/;"	kind:member	line:17
+viz_tools.py	../viz_tools.py	1;"	kind:file	line:1
+write	../writers.py	/^    def write(self, X, ofile):$/;"	kind:member	line:8
+writers.py	../writers.py	1;"	kind:file	line:1
