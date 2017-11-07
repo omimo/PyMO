@@ -1212,48 +1212,76 @@
 			Pace.start();
 			url2 = "../" + url;	
 			self.url = url;
+
 			Papa.parse(url2, {
-			worker: true,
-			delimiter: ",",	
-			dynamicTyping: true,
-			download: true,
-			header: false,
-			complete: function(results) {
-				//self.markerdata = results.data;
-	
-				for (i=0;i<results.data[0].length-3;i+=3) {
-					var markerMesh = new THREE.Mesh(self.makeMarkerGeometryFCN(results.data[0][i], self.scale), self.markerMaterial);
-					markerMesh.markerIndex = i;
-					markerMesh.name = results.data[0][i];
-					scene.add(markerMesh);
-					self.markerMeshes.push(markerMesh);
-					
-				}				
-					
-				self.markerNames = results.data[0];
-
-				for (f=1;f<results.data.length;f++) {
-					self.markerdata[f] = [];
-					for (m=0;m<results.data[f].length-3;m+=3) {
-						marker = {};
-						marker.x = results.data[f][m];
-						marker.y = results.data[f][m+1];
-						marker.z = results.data[f][m+2];
-						marker.name = self.markerNames[m];
-
-						self.markerdata[f].push(marker);
-					} 
-				}				
-
-				self.frameCount = self.markerdata.length;
-				self.log("Done parsing!");	
-				self.ready = true;
-				if (callback)
-					callback();
-			}
+				worker: true,
+				delimiter: ",",	
+				dynamicTyping: true,
+				download: true,
+				header: false,
+				complete: function(results) {
+					self.processData(results);
+					if (callback)
+						callback();
+				}
 			});
 		};
+
+		this.loadFromBuffer = function(data, callback) {
+			self.log("Loading the mocap from buffer...");
+			Pace.start();	
+			var preData = data.split('\n');
+			preData = preData.map(function(d,i){
+				var cols = d.split(',');
+				var floats = cols;
+				// console.log(i);
+				if (i!=0) {
+					floats = cols.map(function(p, j){
+						return parseFloat(p);
+					});
+				}
+				
+				return floats;
+			});
+			
+			this.processData({data: preData});
+			if (callback)
+				callback();
+		}
 	
+		this.processData = function(results) {
+			//self.markerdata = results.data;
+			// console.log(results);
+
+			for (i=0;i<results.data[0].length-3;i+=3) {
+				var markerMesh = new THREE.Mesh(self.makeMarkerGeometryFCN(results.data[0][i], self.scale), self.markerMaterial);
+				markerMesh.markerIndex = i;
+				markerMesh.name = results.data[0][i];
+				scene.add(markerMesh);
+				self.markerMeshes.push(markerMesh);
+				
+			}				
+				
+			self.markerNames = results.data[0];
+
+			for (f=1;f<results.data.length;f++) {
+				self.markerdata[f] = [];
+				for (m=0;m<results.data[f].length-3;m+=3) {
+					marker = {};
+					marker.x = results.data[f][m];
+					marker.y = results.data[f][m+1];
+					marker.z = results.data[f][m+2];
+					marker.name = self.markerNames[m];
+
+					self.markerdata[f].push(marker);
+				} 
+			}				
+
+			self.frameCount = self.markerdata.length;
+			self.log("Done parsing!");	
+			self.ready = true;
+		}
+
 		this.setOriginPosition = function (x, y, z) {
 			self.originPosition.set(x,y,z);
 		};
@@ -1271,8 +1299,8 @@
 			for (m=0;m<self.markerMeshes.length; m++) {
 				self.markerMeshes[m].position.set(
 					self.markerdata[frame][m].x * self.scale + self.originPosition.x,
-					self.markerdata[frame][m].y * self.scale + self.originPosition.y,
-					self.markerdata[frame][m].z * self.scale + self.originPosition.z);
+					self.markerdata[frame][m].z * self.scale + self.originPosition.z,
+					self.markerdata[frame][m].y * self.scale + self.originPosition.y);
 			}
 		};
 	};

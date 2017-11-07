@@ -1,6 +1,7 @@
 .vscode/
 scraps/*
 others/*
+bvhs/
 
 *.ckpt*
 *.pkl
