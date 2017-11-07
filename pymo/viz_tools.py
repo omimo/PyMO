@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import IPython
+import os
 
 def save_fig(fig_id, tight_layout=True):
     if tight_layout:
@@ -162,7 +163,7 @@ def print_skel(X):
             stack.append(c)
 
 
-def play_mocap(mocap, mf, frame_time=1/30, base_url='http://titan:8385'):
+def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, base_url='http://titan:8385'):
     if mf == 'bvh':
         bw = BVHWriter()
         with open('test.bvh', 'w') as ofile:
@@ -182,6 +183,41 @@ def play_mocap(mocap, mf, frame_time=1/30, base_url='http://titan:8385'):
         return
     
     url = '%s/mocapplayer/player.html?data_url=%s&scale=.7&cz=200&order=xzyi&frame_time=%f'%(base_url, filepath, frame_time)
+    iframe = '<iframe src=' + url + ' width="100%" height=500></iframe>'
+    link = '<a href=%s target="_blank">New Window</a>'%url
+    return IPython.display.HTML(iframe+link)
+
+def nb_play_mocap(mocap, mf, frame_time=1/30, base_url=None):
+    data_template = 'var dataBuffer = `$$DATA$$`;start(dataBuffer);'
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+
+    if base_url is None:
+        base_url = os.path.join(dir_path, 'mocapplayer/playBuffer.html')
+    
+    print(dir_path)
+
+    if mf == 'bvh':
+        pass
+    elif mf == 'pos':
+        cols = list(mocap.values.columns)
+        for c in cols:
+            if 'rotation' in c:
+                cols.remove(c)
+        
+        data_csv = mocap.values.to_csv(index=False, columns=cols)
+        
+        data_assigned = data_template.replace('$$DATA$$', data_csv)
+
+    else:
+        return
+    
+    
+
+    with open(os.path.join(dir_path, 'mocapplayer/data.js'), 'w') as oFile:
+        oFile.write(data_assigned)
+
+    url = '%s?&scale=.7&cz=200&order=xzyi&frame_time=%f'%(base_url, frame_time)
     iframe = '<iframe src=' + url + ' width="100%" height=500></iframe>'
     link = '<a href=%s target="_blank">New Window</a>'%url
     return IPython.display.HTML(iframe+link)
