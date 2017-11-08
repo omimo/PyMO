@@ -152,18 +152,18 @@ By Omid Alemi
 
         function add_floor_grid(){
             // Create a grid for the floor
-			var size = 300,
-				step = 20;
+			var size = 400,
+				step = 40;
 
             // Draw the plane
 			var planeGeometry = new THREE.PlaneGeometry(size * 2, size * 2);
 			var planeMaterial = new THREE.MeshPhongMaterial({
-				color: 0x444444,
-				emissive: 0x000000,
-				specular: 0x111111,
+				color: 0x212121,
+				emissive: 0x333333,
+				specular: 0x222222,
 				side: THREE.DoubleSide,
 				transparent: true,
-				opacity: 0.6
+				opacity: 0.3
 			});
 			var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 			plane.position.set(0, 0, 0);
@@ -173,7 +173,7 @@ By Omid Alemi
             //Draw the lines
 			var lineGeometry = new THREE.Geometry();
 			var lineMaterial = new THREE.LineBasicMaterial({
-				color: 0x555555,
+				color: 0x333333,
 				linewidth: 1.2
 			});
 			for (var i = -size; i <= size; i += step) {
@@ -190,7 +190,7 @@ By Omid Alemi
         function init(cz) {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 4000);
-            camera.position.set(0, 80, 0);
+            camera.position.set(0, 250, 0);
             camera.position.z = cz;
             scene.add(camera);
 
@@ -219,7 +219,7 @@ By Omid Alemi
         }
 
         function loadPosBuffer(data, cname, jm, bm, scale, fr) {            
-            var c2 = new C3DCharacter(cname, bonematerial5, makeJointGeometry_SphereX(2));
+            var c2 = new C3DCharacter(cname, bonematerial5, makeJointGeometry_SphereX(2.5));
             // c2.setOriginPosition(0, 0, 0);
             c2.scale = scale;
             c2.frameTime = fr;
