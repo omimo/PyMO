@@ -3,6 +3,8 @@ scraps/*
 others/*
 bvhs/
 
+pymo/mocapplayer/data.js
+
 *.ckpt*
 *.pkl
 *.bvh
