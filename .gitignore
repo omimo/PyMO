@@ -7,7 +7,6 @@ pymo/mocapplayer/data.js
 
 *.ckpt*
 *.pkl
-*.bvh
 *.swp
 
 *.png
