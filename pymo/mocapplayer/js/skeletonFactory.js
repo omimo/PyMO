@@ -177,6 +177,12 @@ var makeMarkerGeometry_SphereX = function(markerName, scale) {
     return new THREE.SphereGeometry(5, 60, 60);
 };
 
+var makeJointGeometry_SphereX = function(X) {
+    return function(jointName, scale) {
+        return new THREE.SphereGeometry(X / scale, 60, 60);
+    };    
+};
+
 
 var makeJointGeometry_Sphere1 = function(jointName, scale) {
     return new THREE.SphereGeometry(2 / scale, 60, 60);

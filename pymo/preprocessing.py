@@ -63,12 +63,12 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
             pos_df = pd.DataFrame(index=euler_df.index)
 
             # Copy the root rotations into the new DataFrame
-            rxp = '%s_Xrotation'%track.root_name
-            ryp = '%s_Yrotation'%track.root_name
-            rzp = '%s_Zrotation'%track.root_name
-            pos_df[rxp] = pd.Series(data=euler_df[rxp], index=pos_df.index)
-            pos_df[ryp] = pd.Series(data=euler_df[ryp], index=pos_df.index)
-            pos_df[rzp] = pd.Series(data=euler_df[rzp], index=pos_df.index)
+            # rxp = '%s_Xrotation'%track.root_name
+            # ryp = '%s_Yrotation'%track.root_name
+            # rzp = '%s_Zrotation'%track.root_name
+            # pos_df[rxp] = pd.Series(data=euler_df[rxp], index=pos_df.index)
+            # pos_df[ryp] = pd.Series(data=euler_df[ryp], index=pos_df.index)
+            # pos_df[rzp] = pd.Series(data=euler_df[rzp], index=pos_df.index)
 
             # List the columns that contain rotation channels
             rot_cols = [c for c in euler_df.columns if ('rotation' in c)]
@@ -105,27 +105,34 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
                                   f[1]['%s_Yposition'%joint], 
                                   f[1]['%s_Zposition'%joint]] for f in pc.iterrows()]
 
-                #euler_values = [[0,0,0] for f in rc.iterrows()]
-                #pos_values = [[0,0,0] for f in pc.iterrows()] 
+                #euler_values = [[0,0,0] for f in rc.iterrows()] #for deugging
+                #pos_values = [[0,0,0] for f in pc.iterrows()] #for deugging
+                
                 # Convert the eulers to rotation matrices
-                rotmats = np.asarray([Rotation(f, 'euler', from_deg=True).rotmat.T for f in euler_values])                  
-                tree_data[joint]=[[],[]] 
+                rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', from_deg=True).rotmat for f in euler_values])                  
+                tree_data[joint]=[
+                                    [], # to store the rotation matrix
+                                    []  # to store the calculated position
+                                 ] 
 
                 if track.root_name == joint:
                     tree_data[joint][0] = rotmats
-                    tree_data[joint][1] = np.add(pos_values, track.skeleton[joint]['offsets'])
-                    #tree_data[joint][1] = pos_values
+                    # tree_data[joint][1] = np.add(pos_values, track.skeleton[joint]['offsets'])
+                    tree_data[joint][1] = pos_values
                 else:
+                    # for every frame i, multiply this joint's rotmat to the rotmat of its parent
                     tree_data[joint][0] = np.asarray([np.matmul(rotmats[i], tree_data[parent][0][i]) 
                                                       for i in range(len(tree_data[parent][0]))])
 
+                    # add the position channel to the offset and store it in k, for every frame i
                     k = np.asarray([np.add(pos_values[i],  track.skeleton[joint]['offsets'])
                                     for i in range(len(tree_data[parent][0]))])
 
-
+                    # multiply k to the rotmat of the parent for every frame i
                     q = np.asarray([np.matmul(k[i], tree_data[parent][0][i]) 
                                     for i in range(len(tree_data[parent][0]))])
 
+                    # add q to the position of the parent, for every frame i
                     tree_data[joint][1] = np.asarray([np.add(q[i], tree_data[parent][1][i])
                                                       for i in range(len(tree_data[parent][1]))])
 

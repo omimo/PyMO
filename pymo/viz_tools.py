@@ -163,7 +163,7 @@ def print_skel(X):
             stack.append(c)
 
 
-def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, base_url='http://titan:8385'):
+def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, scale=1, base_url='http://titan:8385'):
     if mf == 'bvh':
         bw = BVHWriter()
         with open('test.bvh', 'w') as ofile:
@@ -182,20 +182,20 @@ def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, base_url='http://titan:838
     else:
         return
     
-    url = '%s/mocapplayer/player.html?data_url=%s&scale=.7&cz=200&order=xzyi&frame_time=%f'%(base_url, filepath, frame_time)
+    url = '%s/mocapplayer/player.html?data_url=%s&scale=%f&cz=200&order=xzyi&frame_time=%f'%(base_url, filepath, scale, frame_time)
     iframe = '<iframe src=' + url + ' width="100%" height=500></iframe>'
     link = '<a href=%s target="_blank">New Window</a>'%url
     return IPython.display.HTML(iframe+link)
 
-def nb_play_mocap(mocap, mf, frame_time=1/30, base_url=None):
-    data_template = 'var dataBuffer = `$$DATA$$`;start(dataBuffer);'
+def nb_play_mocap(mocap, mf, frame_time=1/30, scale=1, camera_z=500, base_url=None):
+    data_template = 'var dataBuffer = `$$DATA$$`;start(dataBuffer, $$CZ$$, $$SCALE$$, $$FRAMETIME$$);'
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
     if base_url is None:
         base_url = os.path.join(dir_path, 'mocapplayer/playBuffer.html')
     
-    print(dir_path)
+    # print(dir_path)
 
     if mf == 'bvh':
         pass
@@ -208,6 +208,9 @@ def nb_play_mocap(mocap, mf, frame_time=1/30, base_url=None):
         data_csv = mocap.values.to_csv(index=False, columns=cols)
         
         data_assigned = data_template.replace('$$DATA$$', data_csv)
+        data_assigned = data_assigned.replace('$$CZ$$', str(camera_z))
+        data_assigned = data_assigned.replace('$$SCALE$$', str(scale))
+        data_assigned = data_assigned.replace('$$FRAMETIME$$', str(frame_time))
 
     else:
         return
@@ -217,7 +220,7 @@ def nb_play_mocap(mocap, mf, frame_time=1/30, base_url=None):
     with open(os.path.join(dir_path, 'mocapplayer/data.js'), 'w') as oFile:
         oFile.write(data_assigned)
 
-    url = '%s?&scale=.7&cz=200&order=xzyi&frame_time=%f'%(base_url, frame_time)
-    iframe = '<iframe src=' + url + ' width="100%" height=500></iframe>'
+    url = '%s?&cz=200&order=xzyi&frame_time=%f&scale=%f'%(base_url, frame_time, scale)
+    iframe = '<iframe frameborder="0" src=' + url + ' width="100%" height=500></iframe>'
     link = '<a href=%s target="_blank">New Window</a>'%url
     return IPython.display.HTML(iframe+link)

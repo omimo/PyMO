@@ -9,7 +9,10 @@ By Omid Alemi
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <style>
-
+        body {
+            margin:0;
+            overflow: hidden;
+        }
     </style>
     <link rel="stylesheet" href="styles/pace.css"></link>
 
@@ -216,8 +219,8 @@ By Omid Alemi
         }
 
         function loadPosBuffer(data, cname, jm, bm, scale, fr) {            
-            var c2 = new C3DCharacter(cname, bonematerial5, makeJointGeometry_Sphere2);
-            c2.setOriginPosition(0, 0, 0);
+            var c2 = new C3DCharacter(cname, bonematerial5, makeJointGeometry_SphereX(2));
+            // c2.setOriginPosition(0, 0, 0);
             c2.scale = scale;
             c2.frameTime = fr;
             c2.loadFromBuffer(data, function() {});
@@ -308,10 +311,10 @@ By Omid Alemi
         //     animate();
         // });
 
-        function start(dataBuffer) {
-            var cz = 550;
-            var scale = 1.0;
-            var frameTime = 1/120;
+        function start(dataBuffer, cz, scale, frameTime) {
+            // var cz = getUrlParameter('cz');
+            // var scale = getUrlParameter('scale');
+            // var frameTime = getUrlParameter('frame_time');
 
             if (cz === undefined)
                 cz = 550;

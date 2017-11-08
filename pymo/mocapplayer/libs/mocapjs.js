@@ -1299,8 +1299,8 @@
 			for (m=0;m<self.markerMeshes.length; m++) {
 				self.markerMeshes[m].position.set(
 					self.markerdata[frame][m].x * self.scale + self.originPosition.x,
-					self.markerdata[frame][m].z * self.scale + self.originPosition.z,
-					self.markerdata[frame][m].y * self.scale + self.originPosition.y);
+					self.markerdata[frame][m].y * self.scale + self.originPosition.y,
+					self.markerdata[frame][m].z * self.scale + self.originPosition.z);
 			}
 		};
 	};

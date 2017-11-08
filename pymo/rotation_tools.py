@@ -33,20 +33,32 @@ class Rotation():
             beta = deg2rad(beta)
             gamma = deg2rad(gamma)
         
+        ca = math.cos(alpha)
+        cb = math.cos(beta)
+        cg = math.cos(gamma)
+        sa = math.sin(alpha)
+        sb = math.sin(beta)
+        sg = math.sin(gamma)        
+
         Rx = np.asarray([[1, 0, 0], 
-              [0, math.cos(alpha), -math.sin(alpha)], 
-              [0, math.sin(alpha), math.cos(alpha)]
+              [0, ca, sa], 
+              [0, -sa, ca]
               ])
 
-        Ry = np.asarray([[math.cos(beta), 0, math.sin(beta)], 
+        Ry = np.asarray([[cb, 0, -sb], 
               [0, 1, 0],
-              [-math.sin(beta), 0, math.cos(beta)]])
+              [sb, 0, cb]])
 
-        Rz = np.asarray([[math.cos(gamma), -math.sin(gamma), 0],
-              [math.sin(gamma), math.cos(gamma), 0],
+        Rz = np.asarray([[cg, sg, 0],
+              [-sg, cg, 0],
               [0, 0, 1]])
 
-        self.rotmat = np.matmul(np.matmul(Rz, Ry), Rx)
+        self.rotmat = np.eye(3)
+
+        self.rotmat = np.matmul(Rx, self.rotmat)
+        self.rotmat = np.matmul(Ry, self.rotmat)
+        self.rotmat = np.matmul(Rz, self.rotmat)
+        # self.rotmat = np.matmul(np.matmul(Rz, Ry), Rx)
    
     def _from_expmap(self, alpha, beta, gamma, params):
         if (alpha == 0 and beta == 0 and gamma == 0):
@@ -126,6 +138,9 @@ class Rotation():
     def to_quat(self):
         #TODO
         pass
+    
+    def __str__(self):
+        return "Rotation Matrix: \n " + self.rotmat.__str__()
     
 
 
