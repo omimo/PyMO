@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import IPython
 import os
@@ -187,8 +188,10 @@ def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, scale=1, base_url='http://
     link = '<a href=%s target="_blank">New Window</a>'%url
     return IPython.display.HTML(iframe+link)
 
-def nb_play_mocap(mocap, mf, frame_time=1/30, scale=1, camera_z=500, base_url=None):
-    data_template = 'var dataBuffer = `$$DATA$$`;start(dataBuffer, $$CZ$$, $$SCALE$$, $$FRAMETIME$$);'
+def nb_play_mocap(mocap, mf, meta=None, frame_time=1/30, scale=1, camera_z=500, base_url=None):
+    data_template = 'var dataBuffer = `$$DATA$$`;'
+    data_template += 'var metadata = $$META$$;'
+    data_template += 'start(dataBuffer, metadata, $$CZ$$, $$SCALE$$, $$FRAMETIME$$);'
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -206,8 +209,15 @@ def nb_play_mocap(mocap, mf, frame_time=1/30, scale=1, camera_z=500, base_url=No
                 cols.remove(c)
         
         data_csv = mocap.values.to_csv(index=False, columns=cols)
+
+        if meta is not None:
+            lines = [','.join(item) for item in meta.astype('str')]
+            meta_csv = '[' + ','.join('[%s]'%l for l in lines) +']'            
+        else:
+            meta_csv = '[]'
         
         data_assigned = data_template.replace('$$DATA$$', data_csv)
+        data_assigned = data_assigned.replace('$$META$$', meta_csv)
         data_assigned = data_assigned.replace('$$CZ$$', str(camera_z))
         data_assigned = data_assigned.replace('$$SCALE$$', str(scale))
         data_assigned = data_assigned.replace('$$FRAMETIME$$', str(frame_time))

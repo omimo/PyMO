@@ -1243,6 +1243,7 @@
 				
 				return floats;
 			});
+			preData.pop();			
 			
 			this.processData({data: preData});
 			if (callback)
@@ -1258,14 +1259,13 @@
 				markerMesh.markerIndex = i;
 				markerMesh.name = results.data[0][i];
 				scene.add(markerMesh);
-				self.markerMeshes.push(markerMesh);
-				
-			}				
+				self.markerMeshes.push(markerMesh);				
+			}	
 				
 			self.markerNames = results.data[0];
 
 			for (f=1;f<results.data.length;f++) {
-				self.markerdata[f] = [];
+				self.markerdata[f-1] = [];
 				for (m=0;m<results.data[f].length-3;m+=3) {
 					marker = {};
 					marker.x = results.data[f][m];
@@ -1273,9 +1273,9 @@
 					marker.z = results.data[f][m+2];
 					marker.name = self.markerNames[m];
 
-					self.markerdata[f].push(marker);
-				} 
-			}				
+					self.markerdata[f-1].push(marker);
+				}								
+			}						
 
 			self.frameCount = self.markerdata.length;
 			self.log("Done parsing!");	

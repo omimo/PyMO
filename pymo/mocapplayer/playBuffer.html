@@ -13,8 +13,41 @@ By Omid Alemi
             margin:0;
             overflow: hidden;
         }
+
+        #metaoverlay {
+            width: 600px;
+            height: 150px;
+            background-color: rgba(10,10,10,0.5);
+            position: fixed;
+            bottom: 30px;
+            margin: 0 auto;
+            left: 20px;
+            display: none;
+            border-radius: 10px;
+        }
+
+        #labels {
+            font-family: sans-serif;
+            width: 300px;
+            height: 50%;
+            color: #e1e1e1;
+            line-height: 1.5;
+            /* border: 1px solid #f1f1f1; */
+            display: flex;
+            margin: 20px;
+            padding: 10px;
+        }
+        .bar {
+            fill: rgba(80, 180, 240, 0.99);
+        }
+
+        svg {
+            /* border: 1px solid red; */
+        }
     </style>
     <link rel="stylesheet" href="styles/pace.css"></link>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
     <script src="libs/pace.min.js"></script>
     <script src="libs/math.min.js"></script>
@@ -28,9 +61,16 @@ By Omid Alemi
 </head>
 
 <body>
+    <div id="metaoverlay">
+        <div id="labels"></div>
+        <div id="labelsChart"></div>
+    </div>
+    
     <script type="text/javascript">
         var characters = [];
         var playing = false;
+        var metadata = [];
+        var chart = {};
 
 
         $(document).on("keypress", function(e) {
@@ -258,7 +298,7 @@ By Omid Alemi
                     if (c.playing) {
                         c.animIndex = c.animOffset + Math.floor((Date.now() - c.animStartTimeRef) / c.frameTime / 1000);
 
-                        if (c.animIndex >= c.frameCount) {
+                        if (c.animIndex >= c.frameCount-1) {
                             c.animOffset = 0;
                             c.animStartTimeRef = Date.now();
                             c.animIndex = 0;
@@ -268,54 +308,75 @@ By Omid Alemi
 
                         }
                         c.animFrame(c.animIndex);
+                        
+                        if (showMeta) {
+                            var labeldata = '';
+                            for (var i=0; i<metadata[c.animIndex].length;i++) {
+                                var v = Math.round(metadata[c.animIndex][i]*100)/100;
+                                labeldata+= 'Label '+i+ ':   '+ v+'<br/>';
+                            }                            
+                            document.getElementById('labels').innerHTML = labeldata;
+
+                            updateChart(metadata[c.animIndex]); 
+                        }                        
                     }
                 }
             });
-
+    
             renderer.render(scene, camera);
         }
 
-        
-        // $(document).ready(function () {            
-        //     // var dataURL = getUrlParameter('data_url');                 
-        //     // var cz = getUrlParameter('cz');
-        //     // var scale = getUrlParameter('scale');
-        //     // var frameTime = getUrlParameter('frame_time');
-        //     var cz = 550;
-        //     var scale = 1.0;
-        //     var frameTime = 1/120;
+        function makeLabelsChart() {
+            var metadataFrame = metadata[0];
 
-        //     if (cz === undefined)
-        //         cz = 550;
+            chart.width = 200;
+            chart.height = 150;
             
-        //     if (scale === undefined)
-        //         scale = 1.0;
+            chart.svg = d3.select("#labelsChart")
+                        .append("svg")
+                        .attr("width", 200)
+                        .attr("height", 150);            
             
-        //     if (frameTime === undefined)
-        //         frameTime = 1/120;
-            
-        //     init(cz);
-        //     add_basic_lights();
-        //     add_floor_theo();
-        //     initRenderer();
-            
-        //     if (dataBuffer !==  undefined) {                                
-        //         console.log("Loading from internal bufffer");
-                
-        //         loadPosBuffer(dataBuffer, 'Fig', jm_a, bm_a, scale, frameTime); 
+            chart.x = d3.scaleBand().rangeRound([0, chart.width]).padding(0.1),
+            chart.y = d3.scaleLinear().rangeRound([chart.height, 0]),
+            chart.h = d3.scaleLinear().rangeRound([0, chart.height/2]);;      
 
-        //     }
+            chart.x.domain([0, 1, 2, 3]);
+            chart.y.domain([-3, 3]);
+            chart.h.domain([0, 3]);
+
+            var g = chart.svg.append("g");                        
             
-            
+            g.append("line")
+                .attr('x1', 0)
+                .attr('x2', chart.width)
+                .attr('y1', chart.height/2)
+                .attr('y2', chart.height/2)
+                .attr('stroke', '#f1f1f1');
 
-        //     animate();
-        // });
+            g.selectAll(".bar")
+                .data(metadataFrame)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d, i) { return chart.x(i); })
+                .attr("y", function(d, i) { return chart.y(Math.max(0, d)); })
+                .attr("width", 20)
+                .attr("height", function(d) { return  chart.h(Math.abs(d)); });
+        }
 
-        function start(dataBuffer, cz, scale, frameTime) {
-            // var cz = getUrlParameter('cz');
-            // var scale = getUrlParameter('scale');
-            // var frameTime = getUrlParameter('frame_time');
+        function updateChart(metadataFrame) {
+            var g = chart.svg.select("g");                
 
+            g.selectAll(".bar")
+                .data(metadataFrame)                
+                .attr("class", "bar")
+                .attr("x", function(d, i) { return chart.x(i); })
+                .attr("y", function(d, i) { return chart.y(Math.max(0, d)); })
+                .attr("width", 20)
+                .attr("height", function(d) { return  chart.h(Math.abs(d)); });
+        }
+
+        function start(dataBuffer, metadata, cz, scale, frameTime) {        
             if (cz === undefined)
                 cz = 550;
             
@@ -330,9 +391,16 @@ By Omid Alemi
             add_floor_grid();
             initRenderer();
             
-            if (dataBuffer !==  undefined) {                                
+            if (metadata !==  undefined) {
+                showMeta = true;
+                document.getElementById("metaoverlay").style.display="flex";
+                // console.log(metadata.length);
+                makeLabelsChart();
+            }
+
+            if (dataBuffer !==  undefined) {
                 console.log("Loading from internal bufffer");
-                
+                // console.log(dataBuffer.length);
                 loadPosBuffer(dataBuffer, 'Fig', jointmaterial4, bm_a, scale, frameTime); 
 
             }
