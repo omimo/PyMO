@@ -69,6 +69,7 @@ By Omid Alemi
     <script type="text/javascript">
         var characters = [];
         var playing = false;
+        var showMeta = false;
         var metadata = [];
         var chart = {};
 
@@ -342,8 +343,8 @@ By Omid Alemi
             chart.h = d3.scaleLinear().rangeRound([0, chart.height/2]);;      
 
             chart.x.domain([0, 1, 2, 3]);
-            chart.y.domain([-3, 3]);
-            chart.h.domain([0, 3]);
+            chart.y.domain([-2, 2]);
+            chart.h.domain([0, 2]);
 
             var g = chart.svg.append("g");                        
             
@@ -391,7 +392,7 @@ By Omid Alemi
             add_floor_grid();
             initRenderer();
             
-            if (metadata !==  undefined) {
+            if (metadata.length > 1  ) {
                 showMeta = true;
                 document.getElementById("metaoverlay").style.display="flex";
                 // console.log(metadata.length);
