@@ -1,11 +1,16 @@
 # PyMO
 A library for using motion capture data for machine learning
 
-This library is currently highly experimental and everything is subject to change :)
+**This library is currently highly experimental and everything is subject to change :)**
 
 
-## Features
+## Roadmap
+* Mocap Data Parsers and Writers
+* Common mocap pre-processing algorithms
+* Feature extraction library
+* Visualization tools
 
+## Current Features
 * [Read BVH Files](#read-bvh-files)
 * Write BVH Files
 * Pre-processing pipelines
@@ -24,6 +29,7 @@ This library is currently highly experimental and everything is subject to chang
     * [3D webgl-based animation](#animate-in-3d-inside-a-jupyter-notebook)
 * Annotations
     * Foot/ground contact detector
+
 
 
 ### Read BVH Files
