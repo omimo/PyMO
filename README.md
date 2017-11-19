@@ -6,12 +6,12 @@ This library is currently highly experimental and everything is subject to chang
 
 ## Features
 
-* Read BVH Files
+* [Read BVH Files](#read-bvh-files)
 * Write BVH Files
 * Pre-processing pipelines
-    * Supporting `scikit-learn` API
+    * [Supporting `scikit-learn` API](#scikit-learn-pipeline-api)
     * Convert data representations 
-        * Euler angles to positions
+        * [Euler angles to positions](#convert-to-positions)
         * Euler angles to exponential maps
         * Exponential maps to euler angles
     * Body-oriented global translation and rotation calculation with inverse tranform
@@ -19,9 +19,9 @@ This library is currently highly experimental and everything is subject to chang
     * Standard scaler
     * Joint selectors        
 * Visualization tools
-    * Skeleton hierarchy
-    * 2D frame visualization
-    * 3D webgl-based animation
+    * [Skeleton hierarchy](#get-skeleton-info)
+    * [2D frame visualization](#visualize-a-single-2d-frame)
+    * [3D webgl-based animation](#animate-in-3d-inside-a-jupyter-notebook)
 * Annotations
     * Foot/ground contact detector
 
@@ -108,7 +108,7 @@ positions = mp.fit_transform([parsed_data])
 draw_stickfigure(positions[0], frame=10)
 ```
 
-![2D Skeleton Viz](assets/viz_skel_2d.png)
+![2D Skeleton Viz](assets/viz_skel_2d.png | width=200)
 
 ### Animate in 3D (inside a Jupyter Notebook)
 
@@ -120,6 +120,24 @@ nb_play_mocap(positions[0], 'pos',
 
 ![Mocap Player](assets/mocap_player.png)
 
+
+### Foot/Ground Contact Detector
+```python
+from pymo.features import *
+
+plot_foot_up_down(positions[0], 'RightFoot_Yposition')
+```
+
+![Foot Contact](assets/foot_updown.png)
+
+```python
+signal = create_foot_contact_signal(pos_data[3], 'RightFoot_Yposition')
+plt.figure(figsize=(12,5))
+plt.plot(signal, 'r')
+plt.plot(pos_data[3].values['RightFoot_Yposition'].values, 'g')
+```
+
+![Foot Contact Signal](assets/footcontact_signal.png)
 
 ## Feedback, Bugs, and Questions
 For any questions, feedback, and bug reports, please use the [Github Issues](https://github.com/omimo/PyMO/issues).
