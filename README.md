@@ -108,7 +108,7 @@ positions = mp.fit_transform([parsed_data])
 draw_stickfigure(positions[0], frame=10)
 ```
 
-![2D Skeleton Viz](assets/viz_skel_2d.png | width=200)
+![2D Skeleton Viz](assets/viz_skel_2d.png)
 
 ### Animate in 3D (inside a Jupyter Notebook)
 
