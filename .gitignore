@@ -10,8 +10,8 @@ pymo/mocapplayer/data.js
 *.pkl
 *.swp
 
-*.png
-*.jpg
+#*.png
+#*.jpg
 
 # Created by https://www.gitignore.io/api/python
 
