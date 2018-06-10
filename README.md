@@ -32,7 +32,7 @@ A library for using motion capture data for machine learning
 
 ## Examples
 
-To run these examples, start `jupyter notebook` in this directory or change directory to the `demos` folder and run `python`.
+To run these examples, change directory to the `demos` folder.
 
 ### Read BVH Files
 
