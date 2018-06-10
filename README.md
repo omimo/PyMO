@@ -30,13 +30,14 @@ A library for using motion capture data for machine learning
 * Annotations
     * Foot/ground contact detector
 
+## Examples
 
+To run these examples, start `jupyter notebook` in this directory or change directory to the `demos` folder and run `python`.
 
 ### Read BVH Files
 
 ```python
 from pymo.parsers import BVHParser
-import pymo.viz_tools
 
 parser = BVHParser()
 
@@ -46,9 +47,9 @@ parsed_data = parser.parse('data/AV_8Walk_Meredith_HVHA_Rep1.bvh')
 ### Get Skeleton Info
 
 ```python
-import pymo.viz_tools
+from pymo.viz_tools import *
 
-viz_tools.print_skel(parsed_data)
+print_skel(parsed_data)
 ```
 Will print the skeleton hierarchy:
 ```
@@ -88,6 +89,9 @@ Will print the skeleton hierarchy:
 ### scikit-learn Pipeline API
 
 ```python
+
+from pymo.preprocessing import *
+
 data_pipe = Pipeline([
     ('rcpn', RootCentricPositionNormalizer()),
     ('delta', RootTransformer('abdolute_translation_deltas')),
@@ -103,7 +107,7 @@ piped_data = data_pipe.fit_transform(train_X)
 ### Convert to Positions
 
 ```python
-mp = MocapParameterizer('positions')
+mp = MocapParameterizer('position')
 
 positions = mp.fit_transform([parsed_data])
 ```
