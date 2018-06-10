@@ -30,9 +30,6 @@ A library for using motion capture data for machine learning
 * Annotations
     * Foot/ground contact detector
 
-## Examples
-
-To run these examples, change directory to the `demos` folder.
 
 ### Read BVH Files
 
@@ -41,7 +38,7 @@ from pymo.parsers import BVHParser
 
 parser = BVHParser()
 
-parsed_data = parser.parse('data/AV_8Walk_Meredith_HVHA_Rep1.bvh')
+parsed_data = parser.parse('demos/data/AV_8Walk_Meredith_HVHA_Rep1.bvh')
 ```
 
 ### Get Skeleton Info
@@ -91,8 +88,10 @@ Will print the skeleton hierarchy:
 ```python
 
 from pymo.preprocessing import *
+from sklearn.pipeline import Pipeline
 
 data_pipe = Pipeline([
+    ('param', MocapParameterizer('position')),
     ('rcpn', RootCentricPositionNormalizer()),
     ('delta', RootTransformer('abdolute_translation_deltas')),
     ('const', ConstantsRemover()),
@@ -101,7 +100,7 @@ data_pipe = Pipeline([
     ('stdscale', ListStandardScaler())
 ])
 
-piped_data = data_pipe.fit_transform(train_X)
+piped_data = data_pipe.fit_transform([parsed_data])
 ```
 
 ### Convert to Positions
@@ -125,7 +124,7 @@ draw_stickfigure(positions[0], frame=10)
 ```python
 nb_play_mocap(positions[0], 'pos', 
               scale=2, camera_z=800, frame_time=1/120, 
-              base_url='../pymo/mocapplayer/playBuffer.html')
+              base_url='pymo/mocapplayer/playBuffer.html')
 ```
 
 ![Mocap Player](assets/mocap_player.png)
@@ -141,10 +140,10 @@ plot_foot_up_down(positions[0], 'RightFoot_Yposition')
 ![Foot Contact](assets/foot_updown.png)
 
 ```python
-signal = create_foot_contact_signal(pos_data[3], 'RightFoot_Yposition')
+signal = create_foot_contact_signal(positions[0], 'RightFoot_Yposition')
 plt.figure(figsize=(12,5))
 plt.plot(signal, 'r')
-plt.plot(pos_data[3].values['RightFoot_Yposition'].values, 'g')
+plt.plot(positions[0].values['RightFoot_Yposition'].values, 'g')
 ```
 
 ![Foot Contact Signal](assets/footcontact_signal.png)
