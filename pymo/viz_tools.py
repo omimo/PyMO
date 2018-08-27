@@ -91,7 +91,7 @@ def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=Fa
                     y=parent_y + 0.1,
                     z=parent_z + 0.1,
                     s=joint,
-                    color='rgba(0,0,0,0.9')
+                    color='rgba(0,0,0,0.9)')
 
     return ax
 
