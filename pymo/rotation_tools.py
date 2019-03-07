@@ -24,6 +24,8 @@ class Rotation():
             self._from_euler(rot[0],rot[1],rot[2], params)
         elif param_type == 'expmap':
             self._from_expmap(rot[0], rot[1], rot[2], params)
+        elif param_type == 'quat':
+            self._from_quat(rot[0], rot[1], rot[2], params)
 
     def _from_euler(self, alpha, beta, gamma, params):
         '''Expecting degress'''
@@ -84,7 +86,31 @@ class Rotation():
             [2*x*z*s**2-2*y*c*s, 2*y*z*s**2+2*x*c*s , 2*(z**2-1)*s**2+1]
         ])
         
-
+    def _from_quat(self, alpha, beta, gamma, params):
+        if params['from_deg']==True:
+            alpha = deg2rad(alpha)
+            beta = deg2rad(beta)
+            gamma = deg2rad(gamma)
+        
+        axis = [alpha, beta, gamma]
+        theta = np.linalg.norm(axis)
+        
+        if not np.isclose(np.linalg.norm(axis), 1.):
+            axis = axis/np.linalg.norm(axis)
+        
+        sinThetaOver2 = np.sin(theta * 0.5)
+		
+        q1 = sinThetaOver2 * axis[0]
+        q2 = sinThetaOver2 * axis[1]
+        q3 = sinThetaOver2 * axis[2]
+        q4 = np.cos(theta * 0.5)
+		
+        self.rotmat = np.asarray([
+            [1-2*q2*q2-2*q3*q3,  2*(q1*q2-q3*q4),    2*(q1*q3+q2*q4)],
+            [2*(q1*q2+q3*q4),    1-2*q1*q1-2*q3*q3,  2*(q2*q3-q1*q4)],
+            [2*(q1*q3-q2*q4),    2*(q1*q4+q2*q3),    1-2*q1*q1-2*q2*q2]
+        ])	
+		
 
     def get_euler_axis(self):
         R = self.rotmat

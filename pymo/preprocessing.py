@@ -24,12 +24,15 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         if self.param_type == 'euler':
+            print('euler')
             return X
         elif self.param_type == 'expmap':
             return self._to_expmap(X)
         elif self.param_type == 'quat':
-            return X
+            print('Quats')
+            return self._to_pos(X)
         elif self.param_type == 'position':
+            print('pos')
             return self._to_pos(X)
         else:
             raise 'param types: euler, quat, expmap, position'
@@ -108,8 +111,13 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
                 #euler_values = [[0,0,0] for f in rc.iterrows()] #for deugging
                 #pos_values = [[0,0,0] for f in pc.iterrows()] #for deugging
                 
-                # Convert the eulers to rotation matrices
-                rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', from_deg=True).rotmat for f in euler_values])                  
+                # Convert the eulers or quats to rotation matrices
+                if self.param_type == 'euler':
+                    rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', from_deg=True).rotmat for f in euler_values])
+                elif self.param_type == 'quat':
+                    rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'quat', from_deg=False).rotmat for f in euler_values])
+                else:
+                    raise 'Type not supported'
                 tree_data[joint]=[
                                     [], # to store the rotation matrix
                                     []  # to store the calculated position
