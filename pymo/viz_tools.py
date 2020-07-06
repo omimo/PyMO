@@ -8,7 +8,37 @@ def save_fig(fig_id, tight_layout=True):
     if tight_layout:
         plt.tight_layout()
     plt.savefig(fig_id + '.png', format='png', dpi=300)
+
     
+'''From: https://stackoverflow.com/a/31364297'''
+def set_axes_equal(ax):
+    '''Make axes of 3D plot have equal scale so that spheres appear as spheres,
+    cubes as cubes, etc..  This is one possible solution to Matplotlib's
+    ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
+
+    Input
+      ax: a matplotlib axis, e.g., as output from plt.gca().
+    '''
+
+    x_limits = ax.get_xlim3d()
+    y_limits = ax.get_ylim3d()
+    z_limits = ax.get_zlim3d()
+
+    x_range = abs(x_limits[1] - x_limits[0])
+    x_middle = np.mean(x_limits)
+    y_range = abs(y_limits[1] - y_limits[0])
+    y_middle = np.mean(y_limits)
+    z_range = abs(z_limits[1] - z_limits[0])
+    z_middle = np.mean(z_limits)
+
+    # The plot bounding box is a sphere in the sense of the infinity
+    # norm, hence I call half the max range the plot radius.
+    plot_radius = 0.5*max([x_range, y_range, z_range])
+
+    ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
+    ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
+    ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
+
     
 def draw_stickfigure(mocap_track, frame, data=None, joints=None, draw_names=False, ax=None, figsize=(8,8)):
     if ax is None:
@@ -44,15 +74,16 @@ def draw_stickfigure(mocap_track, frame, data=None, joints=None, draw_names=Fals
             ax.annotate(joint, 
                     (df['%s_Xposition'%joint][frame] + 0.1, 
                      df['%s_Yposition'%joint][frame] + 0.1))
-
+    
     return ax
 
-def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=False, ax=None, figsize=(8,8)):
+def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=False, ax=None, figsize=(8,8), eq_aspec=True):
     from mpl_toolkits.mplot3d import Axes3D
     
     if ax is None:
         fig = plt.figure(figsize=figsize)
-        ax = fig.add_subplot(111, projection='3d') 
+        ax = fig.gca(projection='3d')
+#         ax.set_aspect('equal')
     
     if joints is None:
         joints_to_draw = mocap_track.skeleton.keys()
@@ -92,7 +123,10 @@ def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=Fa
                     z=parent_z + 0.1,
                     s=joint,
                     color='rgba(0,0,0,0.9')
-
+    
+    if eq_aspec:
+        set_axes_equal(ax)
+        
     return ax
 
 
@@ -164,7 +198,7 @@ def print_skel(X):
             stack.append(c)
 
 
-def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, scale=1, base_url='http://titan:8385'):
+def nb_play_mocap_fromurl(mocap, mf, frame_time=1/30, scale=1, base_url='http://localhost:8080'):
     if mf == 'bvh':
         bw = BVHWriter()
         with open('test.bvh', 'w') as ofile:
