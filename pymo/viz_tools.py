@@ -86,7 +86,7 @@ def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=Fa
 #         ax.set_aspect('equal')
     
     if joints is None:
-        joints_to_draw = mocap_track.skeleton.keys()
+        joints_to_draw = mocap_track.channel_names
     else:
         joints_to_draw = joints
     
@@ -107,22 +107,24 @@ def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=Fa
                    alpha=0.6, c='b', marker='o')
 
         
-        children_to_draw = [c for c in mocap_track.skeleton[joint]['children'] if c in joints_to_draw]
-        
-        for c in children_to_draw:
-            child_x = df['%s_Xposition'%c][frame]
-            child_y = df['%s_Zposition'%c][frame]
-            child_z = df['%s_Yposition'%c][frame]
-            # ^ In mocaps, Y is the up-right axis
+        # If there is a skeleton, draw bones
+        if mocap_track.skeleton is not None:
+            children_to_draw = [c for c in mocap_track.skeleton[joint]['children'] if c in joints_to_draw]
+            
+            for c in children_to_draw:
+                child_x = df['%s_Xposition'%c][frame]
+                child_y = df['%s_Zposition'%c][frame]
+                child_z = df['%s_Yposition'%c][frame]
+                # ^ In mocaps, Y is the up-right axis
 
-            ax.plot([parent_x, child_x], [parent_y, child_y], [parent_z, child_z], 'k-', lw=2, c='black')
+                ax.plot([parent_x, child_x], [parent_y, child_y], [parent_z, child_z], 'k-', lw=2, c='black')
             
         if draw_names:
             ax.text(x=parent_x + 0.1, 
                     y=parent_y + 0.1,
                     z=parent_z + 0.1,
                     s=joint,
-                    color='rgba(0,0,0,0.9')
+                    color=(0.1,0.1,0.1, 0.9))
     
     if eq_aspec:
         set_axes_equal(ax)
