@@ -422,7 +422,7 @@ class RootTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, method):
         """
         Accepted methods:
-            abdolute_translation_deltas
+            absolute_translation_deltas
             pos_rot_deltas
             pos_yrot_deltas
         """
@@ -438,7 +438,7 @@ class RootTransformer(BaseEstimator, TransformerMixin):
         Q = []
 
         for track in X:
-            if self.method == 'abdolute_translation_deltas':
+            if self.method == 'absolute_translation_deltas':
                 new_df = track.values.copy()
                 xpcol = '%s_Xposition'%track.root_name
                 ypcol = '%s_Yposition'%track.root_name
@@ -461,7 +461,9 @@ class RootTransformer(BaseEstimator, TransformerMixin):
                 
                 new_track = track.clone()
                 new_track.values = new_df
-            # end of abdolute_translation_deltas
+                print('abs trans delta')
+                print(new_track.values.columns)
+            # end of absolute_translation_deltas
             
             elif self.method == 'pos_rot_deltas':
                 new_track = track.clone()
@@ -1064,6 +1066,179 @@ class RootCentricLCS(BaseEstimator, TransformerMixin):
             rxp = '%s_Xposition'%track.root_name
             ryp = '%s_Yposition'%track.root_name
             rzp = '%s_Zposition'%track.root_name
+            
+            new_df[rxp] = track.values[rxp]
+            new_df[ryp] = track.values[ryp]
+            new_df[rzp] = track.values[rzp]
+            
+            new_track.values = new_df
+
+            Q.append(new_track)
+        
+        return Q
+
+
+
+class RootCentricLCS2(BaseEstimator, TransformerMixin):
+    '''
+    center   columns for root position on the ground floor
+    lat_r:    columns for the right side of the lateral axis on the ground floor
+    lat_l:    columns for the left side of the lateral axis on the ground floor
+    '''
+    def __init__(self, center, lat_r, lat_l):
+        self.center = center
+        self.lat_r = lat_r
+        self.lat_l = lat_l
+        
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        Q = []
+
+        for track in X:
+            new_track = track.clone()
+            
+            c_cols = ['%s_Xposition'%self.center, '%s_Zposition'%self.center]
+            r_cols = ['%s_Xposition'%self.lat_r, '%s_Zposition'%self.lat_r]
+            l_cols = ['%s_Xposition'%self.lat_l, '%s_Zposition'%self.lat_l]
+
+            cent_v = track.values[c_cols].values
+            lat_r_v = track.values[r_cols].values
+            lat_l_v = track.values[l_cols].values
+
+
+            # alpha is the lateral vector
+            alpha_unnorm = (lat_r_v - lat_l_v)
+            # we only need a unit vector
+            alpha = np.asarray([v/np.linalg.norm(v) for v in alpha_unnorm])
+            
+            # beta is perpendiculr to the lateral, ponting towards where the character faces forward
+            beta =  np.asarray([[-v[1], v[0]] for v in alpha])
+            
+            
+            # theta is the angle between the global and local coordinate system
+            theta = [math.atan2(b[1], b[0]) for b in beta]
+                        
+            new_df = pd.DataFrame(index=track.values.index)
+
+     
+            all_but_center = [point_name for point_name in track.channel_names if self.center not in point_name]
+     
+            
+            for point in all_but_center:
+                new_xs = []
+                new_zs = []
+
+                for i in range(alpha.shape[0]):
+                    
+                    
+                    RMat = np.asarray([
+                        [math.cos(theta[i]), -math.sin(theta[i]), cent_v[i,0]],
+                        [math.sin(theta[i]), math.cos(theta[i]), cent_v[i,1]],
+                        [0, 0, 1]
+                    ])
+                    
+                    # get the position of the root at this frame i
+                    cp = np.matmul(RMat, np.asarray([cent_v[i,0], cent_v[i,1], 1]))            
+                
+                    # get the current position of the point
+                    old_p = track.values['%s_Xposition'%point].values[i], track.values['%s_Zposition'%point].values[i]
+                    
+                    # rotate the point over the local coordinate 
+                    vp = np.matmul(RMat, np.asarray([old_p[0], old_p[1], 1]))
+                    
+                    # calculate the new position
+                    local_pos = np.asarray(vp - cp)
+                    
+                    new_xs.append(local_pos[0])
+                    new_zs.append(local_pos[1])
+            
+            
+                new_df['%s_Xposition'%point] = pd.Series(data=new_xs, index=new_df.index)
+                new_df['%s_Zposition'%point] = pd.Series(data=new_zs, index=new_df.index)
+                # we keep the vertical position intact
+                new_df['%s_Yposition'%point] = pd.Series(data=track.values['%s_Yposition'%point].values, index=new_df.index)
+        
+
+
+            # keep the root as it is now            
+            rxp = '%s_Xposition'%self.center
+            ryp = '%s_Yposition'%self.center
+            rzp = '%s_Zposition'%self.center
+            
+            new_df[rxp] = track.values[rxp]
+            new_df[ryp] = track.values[ryp]
+            new_df[rzp] = track.values[rzp]
+            
+            new_df['theta'] = pd.Series(data=theta, index=new_df.index)
+         
+            new_track.values = new_df
+
+            Q.append(new_track)
+        
+        return Q
+
+    def inverse_transform(self, X, copy=None):
+        Q = []
+
+        for track in X:
+            new_track = track.clone()
+            print(track.values.columns)
+            # cent_v is the center of the local coordinate system - for now its the same as the root
+            c_cols = ['%s_Xposition'%self.center, '%s_Zposition'%self.center]            
+            cent_v = track.values[c_cols].values
+            
+            # theta is the angle between the global and local coordinate system
+            theta = track.values['theta'].values
+          
+                        
+            new_df = pd.DataFrame(index=track.values.index)
+            all_but_center = [point_name for point_name in track.channel_names if self.center not in point_name]
+            
+            for point in all_but_center:
+                new_xs = []
+                new_zs = []
+
+                for i in range(theta.shape[0]):
+                    
+                   
+                    RMat = np.asarray([
+                        [math.cos(theta[i]), -math.sin(theta[i]), cent_v[i,0]],
+                        [math.sin(theta[i]), math.cos(theta[i]), cent_v[i,1]],
+                        [0, 0, 1]
+                    ])
+                    
+                    # take the global position of the root at this frame i
+                    cp = [cent_v[i,0], cent_v[i,1], 1]
+                
+                    # get the current position of the point
+                    old_p = track.values['%s_Xposition'%point].values[i], track.values['%s_Zposition'%point].values[i]
+                    
+                    # rotate the point over the local coordinate 
+                    vp = np.matmul(np.asarray([old_p[0], old_p[1], 1]), RMat)
+                    
+                    # calculate the new position
+                    global_pos = np.asarray(vp + cp)
+                    
+                    new_xs.append(global_pos[0])
+                    new_zs.append(global_pos[1])
+            
+            
+                new_df['%s_Xposition'%point] = pd.Series(data=new_xs, index=new_df.index)
+
+                # we keep the vertical position intact
+                new_df['%s_Yposition'%point] = pd.Series(data=track.values['%s_Yposition'%point].values, index=new_df.index)
+        
+                new_df['%s_Zposition'%point] = pd.Series(data=new_zs, index=new_df.index)
+
+
+            # keep the root as it is now
+            #TODO: this need to be changed from root to center
+            rxp = '%s_Xposition'%self.center
+            ryp = '%s_Yposition'%self.center
+            rzp = '%s_Zposition'%self.center
             
             new_df[rxp] = track.values[rxp]
             new_df[ryp] = track.values[ryp]
