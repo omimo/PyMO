@@ -10,9 +10,10 @@ class MocapData():
     def __init__(self):
         self.skeleton = {}
         self.values = None
-        self.channel_names = []
+        self.channel_names = [] #TODO: Come up with a more coherent name for this on others
         self.framerate = 0.0
         self.root_name = ''
+        self.metadata = {} #Note: This possibly breaks old pickles
     
     def traverse(self, j=None):
         stack = [self.root_name]
@@ -30,6 +31,7 @@ class MocapData():
         new_data.channel_names = copy.copy(self.channel_names)
         new_data.root_name = copy.copy(self.root_name)
         new_data.framerate = copy.copy(self.framerate)
+        new_data.metadata = copy.copy(self.metadata)
         return new_data
 
     def get_all_channels(self):
