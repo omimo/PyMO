@@ -352,27 +352,41 @@ class JointSelector(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         selected_joints = []
-        selected_channels = []
+        
 
         if self.include_root:
             selected_joints.append(X[0].root_name)
         
         selected_joints.extend(self.joints)
 
-        for joint_name in selected_joints:
-            selected_channels.extend([o for o in X[0].values.columns if joint_name in o])
             
         Q = []
 
-
+        
+        
         for track in X:
-            t2 = track.clone()
-            
-            for key in track.skeleton.keys():
-                if key not in selected_joints:
-                    t2.skeleton.pop(key)
-            t2.values = track.values[selected_channels]
+            selected_channels = []
 
+            for joint_name in selected_joints:
+                selected_channels.extend([o for o in track.values.columns if joint_name in o])
+
+            t2 = track.clone()
+
+            if track.skeleton is not None:
+                for key in track.skeleton.keys():
+                    if key not in selected_joints:
+                        t2.skeleton.pop(key)
+
+            # t2.channel_names.clear()
+            # for ch in track.channel_names:
+            #     if ch in selected_joints:
+            #         t2.channel_names.remove(ch)
+            channel_names = []
+            for joint_name in selected_joints:
+                channel_names.extend([ch for ch in track.channel_names if joint_name in ch])
+            t2.channel_names = channel_names
+            t2.values = track.values[selected_channels]
+            
             Q.append(t2)
       
 
