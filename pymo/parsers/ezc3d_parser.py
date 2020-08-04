@@ -8,22 +8,22 @@ Created: July, 2020
 
 import numpy as np
 import pandas as pd
-import ezc3d 
 
 from pymo.data import Joint, MocapData
 
-
+#TODO: Do we really need a class here?
 class C3DParser():
     '''
     Parses a C3D file using the ezc3d library and creates a 
     PyMo.MocapData object.
     '''
 
-    def __init__(self, filename):
-        self.data  = self._parse(filename)
+    def __init__(self):
+        import ezc3d 
+        
 
 
-    def _parse(self, filename):
+    def parse(self, filename):
         ezc = ezc3d.c3d(filename)
 
         param_points = ezc['header']['points']
