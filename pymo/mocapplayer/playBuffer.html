@@ -233,8 +233,11 @@ By Omid Alemi
             camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 4000);
             camera.position.set(0, 250, 0);
             camera.position.z = cz;
-            scene.add(camera);
+            
+            //camera.up.set(0,0,1);
 
+            scene.add(camera);
+            
             // set_the_scene3();
         }
 
@@ -391,6 +394,7 @@ By Omid Alemi
             add_basic_lights();
             add_floor_grid();
             initRenderer();
+
             
             if (metadata.length > 1  ) {
                 showMeta = true;
