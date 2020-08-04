@@ -49,14 +49,14 @@ class BVHScanner():
         return self.scanner.scan(stuff)
 
 
-
+#TODO: Do we really need a class here?
 class BVHParser():
     '''
     A class to parse a BVH file.
     
     Extracts the skeleton and channel values
     '''
-    def __init__(self, filename=None):
+    def __init__(self):
         self.reset()
 
     def reset(self): 
