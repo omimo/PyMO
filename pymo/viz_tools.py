@@ -275,5 +275,4 @@ def nb_play_mocap(mocap, mf, meta=None, frame_time=1/30, scale=1, camera_z=500, 
     url = '%s?&cz=200&order=xzyi&frame_time=%f&scale=%f'%(base_url, frame_time, scale)
     iframe = '<iframe frameborder="0" src=' + url + ' width="100%" height=500></iframe>'
     link = '<a href=%s target="_blank">New Window</a>'%url
-    #return IPython.display.HTML(iframe+link)
-    return IPython.display.HTML(link)
+    return IPython.display.HTML(iframe+link)
