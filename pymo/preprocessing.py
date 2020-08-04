@@ -96,6 +96,10 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
                                      f[1]['%s_Yrotation'%joint], 
                                      f[1]['%s_Zrotation'%joint]] for f in rc.iterrows()]
 
+                    ################# in euler angle, the order of rotation axis is very important #####################
+                    rotation_order = rc.columns[0][rc.columns[0].find('rotation') - 1] + rc.columns[1][rc.columns[1].find('rotation') - 1] + rc.columns[2][rc.columns[2].find('rotation') - 1] #rotation_order is string : 'XYZ' or'ZYX' or ...
+                    ####################################################################################################
+
                 if pc.shape[1] < 3:
                     pos_values = [[0,0,0] for f in pc.iterrows()]
                 else:
@@ -107,7 +111,9 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
                 #pos_values = [[0,0,0] for f in pc.iterrows()] #for deugging
                 
                 # Convert the eulers to rotation matrices
-                rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', from_deg=True).rotmat for f in euler_values])                  
+                ############################ input rotation order as Rotation class's argument #########################
+                rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', rotation_order, from_deg=True).rotmat for f in euler_values])
+                ########################################################################################################
                 tree_data[joint]=[
                                     [], # to store the rotation matrix
                                     []  # to store the calculated position
