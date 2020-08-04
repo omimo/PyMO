@@ -475,8 +475,8 @@ class RootTransformer(BaseEstimator, TransformerMixin):
                 
                 new_track = track.clone()
                 new_track.values = new_df
-                print('abs trans delta')
-                print(new_track.values.columns)
+                #print('abs trans delta')
+                #print(new_track.values.columns)
             # end of absolute_translation_deltas
             
             elif self.method == 'pos_rot_deltas':
@@ -853,7 +853,7 @@ class ListStandardScaler(BaseEstimator, TransformerMixin):
     def __init__(self, is_DataFrame=False):
         self.is_DataFrame = is_DataFrame
     
-    def fit(self, X, y=None):
+    def fit(self, X, y=None):        
         if self.is_DataFrame:
             X_train_flat = np.concatenate([m.values for m in X], axis=0)
         else:
@@ -866,7 +866,6 @@ class ListStandardScaler(BaseEstimator, TransformerMixin):
     
     def transform(self, X, y=None):
         Q = []
-        
         for track in X:
             if self.is_DataFrame:
                 normalized_track = track.copy()
@@ -1199,7 +1198,7 @@ class RootCentricLCS2(BaseEstimator, TransformerMixin):
 
         for track in X:
             new_track = track.clone()
-            print(track.values.columns)
+            #print(track.values.columns)
             # cent_v is the center of the local coordinate system - for now its the same as the root
             c_cols = ['%s_Xposition'%self.center, '%s_Zposition'%self.center]            
             cent_v = track.values[c_cols].values
