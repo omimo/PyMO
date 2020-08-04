@@ -152,8 +152,11 @@ plt.plot(positions[0].values['RightFoot_Yposition'].values, 'g')
 For any questions, feedback, and bug reports, please use the [Github Issues](https://github.com/omimo/PyMO/issues).
 
 ## Credits
-Created by [Omid Alemi](https://omid.al/projects/)
+Created by: [Omid Alemi](https://omid.al/projects/)
 
+Contributors: [Ethan Soutar-Rau](https://github.com/ethansr), [Jérôme Parent-Lévesque](https://github.com/jeromepl), [
+JEONG HYEONJIN](https://github.com/demul), [
+Ozge Nilay Yalcin](https://github.com/onyalcin)
 
 ## License
 This code is available under the [MIT license](http://opensource.org/licenses/MIT).
