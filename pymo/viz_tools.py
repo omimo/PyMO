@@ -46,7 +46,7 @@ def draw_stickfigure(mocap_track, frame, data=None, joints=None, draw_names=Fals
         ax = fig.add_subplot(111)
     
     if joints is None:
-        joints_to_draw = mocap_track.skeleton.keys()
+        joints_to_draw = mocap_track.channel_names
     else:
         joints_to_draw = joints
     
@@ -63,12 +63,14 @@ def draw_stickfigure(mocap_track, frame, data=None, joints=None, draw_names=Fals
         parent_x = df['%s_Xposition'%joint][frame]
         parent_y = df['%s_Yposition'%joint][frame]
         
-        children_to_draw = [c for c in mocap_track.skeleton[joint]['children'] if c in joints_to_draw]
-        
-        for c in children_to_draw:
-            child_x = df['%s_Xposition'%c][frame]
-            child_y = df['%s_Yposition'%c][frame]
-            ax.plot([parent_x, child_x], [parent_y, child_y], 'k-', lw=2)
+        # If there is a skeleton, draw bones
+        if mocap_track.skeleton is not None:
+            children_to_draw = [c for c in mocap_track.skeleton[joint]['children'] if c in joints_to_draw]
+            
+            for c in children_to_draw:
+                child_x = df['%s_Xposition'%c][frame]
+                child_y = df['%s_Yposition'%c][frame]
+                ax.plot([parent_x, child_x], [parent_y, child_y], 'k-', lw=2)
             
         if draw_names:
             ax.annotate(joint, 
@@ -85,6 +87,10 @@ def draw_stickfigure3d(mocap_track, frame, data=None, joints=None, draw_names=Fa
         ax = fig.gca(projection='3d')
 #         ax.set_aspect('equal')
     
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ax.get_zaxis().set_ticks([])
+
     if joints is None:
         joints_to_draw = mocap_track.channel_names
     else:
@@ -269,4 +275,5 @@ def nb_play_mocap(mocap, mf, meta=None, frame_time=1/30, scale=1, camera_z=500, 
     url = '%s?&cz=200&order=xzyi&frame_time=%f&scale=%f'%(base_url, frame_time, scale)
     iframe = '<iframe frameborder="0" src=' + url + ' width="100%" height=500></iframe>'
     link = '<a href=%s target="_blank">New Window</a>'%url
-    return IPython.display.HTML(iframe+link)
+    #return IPython.display.HTML(iframe+link)
+    return IPython.display.HTML(link)
