@@ -6,10 +6,10 @@ Created by Omid Alemi | Nov 17 2017
 '''
 import numpy as np
 import pandas as pd
-import peakutils
 import matplotlib.pyplot as plt
 
 def get_foot_contact_idxs(signal, t=0.02, min_dist=120):
+    import peakutils
     up_idxs = peakutils.indexes(signal, thres=t/max(signal), min_dist=min_dist)
     down_idxs = peakutils.indexes(-signal, thres=t/min(signal), min_dist=min_dist)
 
