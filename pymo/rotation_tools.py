@@ -18,8 +18,9 @@ def rad2deg(x):
     return x/math.pi*180
 
 class Rotation():
-    def __init__(self,rot, param_type, **params):
+    def __init__(self,rot, param_type, rotation_order, **params):
         self.rotmat = []
+        self.rotation_order = rotation_order
         if param_type == 'euler':
             self._from_euler(rot[0],rot[1],rot[2], params)
         elif param_type == 'expmap':
@@ -57,10 +58,15 @@ class Rotation():
 
         self.rotmat = np.eye(3)
 
-        self.rotmat = np.matmul(Rx, self.rotmat)
-        self.rotmat = np.matmul(Ry, self.rotmat)
-        self.rotmat = np.matmul(Rz, self.rotmat)
-        # self.rotmat = np.matmul(np.matmul(Rz, Ry), Rx)
+        ############################ inner product rotation matrix in order defined at BVH file #########################
+        for axis in self.rotation_order :
+            if axis == 'X' :
+                self.rotmat = np.matmul(Rx, self.rotmat)
+            elif axis == 'Y':
+                self.rotmat = np.matmul(Ry, self.rotmat)
+            else :
+                self.rotmat = np.matmul(Rz, self.rotmat)
+        ################################################################################################################
    
     def _from_expmap(self, alpha, beta, gamma, params):
         if (alpha == 0 and beta == 0 and gamma == 0):

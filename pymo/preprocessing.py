@@ -35,8 +35,7 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
             print('pos')
             return self._to_pos(X)
         else:
-            raise 'param types: euler, quat, expmap, position'
-
+            raise UnsupportedParamError('Unsupported param: %s. Valid param types are: euler, quat, expmap, position' % self.param_type)
 #        return X
     
     def inverse_transform(self, X, copy=None): 
@@ -45,13 +44,12 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
         elif self.param_type == 'expmap':
             return self._expmap_to_euler(X)
         elif self.param_type == 'quat':
-            raise 'quat2euler is not supported'
+            raise UnsupportedParamError('quat2euler is not supported')
         elif self.param_type == 'position':
-            # raise 'positions 2 eulers is not supported'
             print('positions 2 eulers is not supported')
             return X
         else:
-            raise 'param types: euler, quat, expmap, position'
+            raise UnsupportedParamError('Unsupported param: %s. Valid param types are: euler, quat, expmap, position' % self.param_type)
 
     def _to_pos(self, X):
         '''Converts joints rotations in Euler angles to joint positions'''
@@ -101,6 +99,10 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
                                      f[1]['%s_Yrotation'%joint], 
                                      f[1]['%s_Zrotation'%joint]] for f in rc.iterrows()]
 
+                    ################# in euler angle, the order of rotation axis is very important #####################
+                    rotation_order = rc.columns[0][rc.columns[0].find('rotation') - 1] + rc.columns[1][rc.columns[1].find('rotation') - 1] + rc.columns[2][rc.columns[2].find('rotation') - 1] #rotation_order is string : 'XYZ' or'ZYX' or ...
+                    ####################################################################################################
+
                 if pc.shape[1] < 3:
                     pos_values = [[0,0,0] for f in pc.iterrows()]
                 else:
@@ -111,13 +113,17 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
                 #euler_values = [[0,0,0] for f in rc.iterrows()] #for deugging
                 #pos_values = [[0,0,0] for f in pc.iterrows()] #for deugging
                 
+
                 # Convert the eulers or quats to rotation matrices
                 if self.param_type == 'euler':
-                    rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', from_deg=True).rotmat for f in euler_values])
+                    # Convert the eulers to rotation matrices
+                    rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', rotation_order, from_deg=True).rotmat for f in euler_values])
                 elif self.param_type == 'quat':
-                    rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'quat', from_deg=False).rotmat for f in euler_values])
+                    # Rotation order for quats currently not supported
+                    rotmats = np.asarray([Rotation([f[0], f[1], f[2]], 'quat', rotation_order, from_deg=False).rotmat for f in euler_values])
                 else:
                     raise 'Type not supported'
+
                 tree_data[joint]=[
                                     [], # to store the rotation matrix
                                     []  # to store the calculated position
@@ -739,3 +745,6 @@ class TemplateTransform(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         return X
 
+class UnsupportedParamError(Exception):
+    def __init__(self, message):
+        self.message = message
