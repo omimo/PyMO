@@ -84,7 +84,7 @@ class BVHParser():
         self._parse_motion(tokens)
         
         self.data.skeleton = self._skeleton
-        self.data.channel_names = self._motion_channels
+        self.data.channel_names = list(set([m[0] for m in self._motion_channels]))
         self.data.values = self._to_DataFrame()
         self.data.root_name = self.root_name
         self.data.framerate = self.framerate
