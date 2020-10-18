@@ -24,6 +24,7 @@ class C3DParser():
 
 
     def parse(self, filename):
+        import ezc3d
         ezc = ezc3d.c3d(filename)
 
         param_points = ezc['header']['points']
@@ -46,8 +47,6 @@ class C3DParser():
         
         points = ezc['data']['points']
 
-        
-        
         values = []
         column_names = []
 
@@ -68,9 +67,14 @@ class C3DParser():
         
         values = np.asarray(values)
 
+        
+
         time_index = pd.to_timedelta([f[0] for f in values], unit='s')
 
-        mocap_data.values = pd.DataFrame(data=values, index=time_index, columns=column_names)
+        
+        
+
+        mocap_data.values = pd.DataFrame(data=values[:,0:len(column_names)], index=time_index, columns=column_names) #just a hack for now - need to double check
 
         return mocap_data
         
