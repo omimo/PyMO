@@ -13,9 +13,16 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://omid.al/projects/PyMO.html",
     packages=setuptools.find_packages(),
+    include_package_data=True,    # include files in MANIFEST.in
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ),
+    install_requires=[    # dependencies
+        'numpy',
+        'pandas',
+        'matplotlib',
+        'scikit-learn'
+    ]
 )
