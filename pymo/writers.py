@@ -30,7 +30,7 @@ class BVHWriter():
         elif len(X.skeleton[joint]['children']) > 0:
             ofile.write('%sJOINT %s\n'%('\t'*(tab), joint))
         else:
-            ofile.write('%sEnd site\n'%('\t'*(tab)))
+            ofile.write('%sEnd Site\n'%('\t'*(tab)))
 
         ofile.write('%s{\n'%('\t'*(tab)))
         
