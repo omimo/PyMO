@@ -9,6 +9,7 @@ Adapted from that matlab file...
 
 import math
 import numpy as np
+from scipy.spatial.transform import Rotation as SpRotation
 
 def deg2rad(x):
     return x/180*math.pi
@@ -98,6 +99,15 @@ class Rotation():
         axis = np.asarray([R[2,1] - R[1,2], R[0,2] - R[2,0], R[1,0] - R[0,1]])
         axis = axis/(2*math.sin(theta))
         return theta, axis
+
+    def to_axis_angle(self):
+        # transpose matrix because we're building the rotation matrix in a different way
+        transposed_rot_matrix = np.matrix.transpose(self.rotmat)
+
+        sp_rot = SpRotation.from_matrix(transposed_rot_matrix)
+        rot_vec = sp_rot.as_rotvec()
+
+        return rot_vec
 
     def to_expmap(self):
         theta, axis = self.get_euler_axis()

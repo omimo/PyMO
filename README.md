@@ -18,6 +18,7 @@ A library for using motion capture data for machine learning
     * Convert data representations 
         * [Euler angles to positions](#convert-to-positions)
         * Euler angles to exponential maps
+        * Euler angles to axis angles
         * Exponential maps to euler angles
     * Body-oriented global translation and rotation calculation with inverse tranform
     * Root-centric position normalizer with inverse tranform

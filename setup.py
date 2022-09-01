@@ -23,6 +23,7 @@ setuptools.setup(
         'numpy',
         'pandas',
         'matplotlib',
+        'scipy',
         'scikit-learn'
     ]
 )
