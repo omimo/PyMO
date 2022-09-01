@@ -31,6 +31,8 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
             return X
         elif self.param_type == 'position':
             return self._to_pos(X)
+        elif self.param_type == 'axis_angle':
+            return self._to_axis_angle(X)
         else:
             raise UnsupportedParamError('Unsupported param: %s. Valid param types are: euler, quat, expmap, position' % self.param_type)
 #        return X
@@ -149,6 +151,80 @@ class MocapParameterizer(BaseEstimator, TransformerMixin):
 
             new_track = track.clone()
             new_track.values = pos_df
+            Q.append(new_track)
+        return Q
+
+
+    def _to_axis_angle(self, X):
+        '''Converts joints rotations in Euler angles to axis angle rotations'''
+
+        Q = []
+        for track in X:
+            # fix track names
+            # adapt joint name so that it's equal for either male or female
+            channels = []
+            titles = []
+            euler_df = track.values
+
+            # Create a new DataFrame to store the axis angle values
+            axis_anlge_df = pd.DataFrame(index=euler_df.index)
+
+            # List the columns that contain rotation channels
+            rot_cols = [c for c in euler_df.columns if ('rotation' in c)]
+
+            # List the columns that contain position channels
+            pos_cols = [c for c in euler_df.columns if ('position' in c)]
+
+            # List the joints that are not end sites, i.e., have channels
+            joints = (joint for joint in track.skeleton)
+
+            tree_data = {}
+
+            for joint in track.traverse():
+                parent = track.skeleton[joint]['parent']
+
+                # Get the rotation columns that belong to this joint
+                rc = euler_df[[c for c in rot_cols if joint in c]]
+
+                # Get the position columns that belong to this joint
+                pc = euler_df[[c for c in pos_cols if joint in c]]
+
+                # Make sure the columns are organized in xyz order
+                if rc.shape[1] < 3:
+                    euler_values = [[0,0,0] for f in rc.iterrows()]
+                else:
+                    euler_values = [[f[1]['%s_Xrotation'%joint],
+                                     f[1]['%s_Yrotation'%joint],
+                                     f[1]['%s_Zrotation'%joint]] for f in rc.iterrows()]
+
+                    ################# in euler angle, the order of rotation axis is very important #####################
+                    rotation_order = rc.columns[0][rc.columns[0].find('rotation') - 1] + rc.columns[1][rc.columns[1].find('rotation') - 1] + rc.columns[2][rc.columns[2].find('rotation') - 1] #rotation_order is string : 'XYZ' or'ZYX' or ...
+                    ####################################################################################################
+
+                if pc.shape[1] < 3:
+                    pos_values = [[0,0,0] for f in pc.iterrows()]
+                else:
+                    pos_values =[[f[1]['%s_Xposition'%joint],
+                                  f[1]['%s_Yposition'%joint],
+                                  f[1]['%s_Zposition'%joint]] for f in pc.iterrows()]
+
+                # Convert the eulers to axis angles
+                ############################ input rotation order as Rotation class's argument #########################
+                axis_angles = np.asarray([Rotation([f[0], f[1], f[2]], 'euler', rotation_order, from_deg=True).to_axis_angle() for f in euler_values])
+                ########################################################################################################
+
+                # Create the corresponding columns in the new DataFrame
+                axis_anlge_df['%s_Xposition'%joint] = pd.Series(data=[e[0] for e in pos_values], index=axis_anlge_df.index)
+                axis_anlge_df['%s_Yposition'%joint] = pd.Series(data=[e[1] for e in pos_values], index=axis_anlge_df.index)
+                axis_anlge_df['%s_Zposition'%joint] = pd.Series(data=[e[2] for e in pos_values], index=axis_anlge_df.index)
+
+                axis_anlge_df['%s_Xrotation'%joint] = pd.Series(data=[e[0] for e in axis_angles], index=axis_anlge_df.index)
+                axis_anlge_df['%s_Yrotation'%joint] = pd.Series(data=[e[1] for e in axis_angles], index=axis_anlge_df.index)
+                axis_anlge_df['%s_Zrotation'%joint] = pd.Series(data=[e[2] for e in axis_angles], index=axis_anlge_df.index)
+
+
+            new_track = track.clone()
+            new_track.values = axis_anlge_df
             Q.append(new_track)
         return Q
 
